@@ -581,7 +581,7 @@ const getBotResponse = (
                     resetContext: true,
                     messages: [
                         'Hello! Welcome to CoverHub.',
-                        'How can I help you today? Reply with:\n1) Buy new policy\n2) Request callback\n3) File claim',
+                        'How can I help you today? Reply with:\n1) Buy new policy\n2) Request callback\n3) Claims\n4) Support',
                     ],
                 }
             }
