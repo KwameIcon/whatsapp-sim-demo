@@ -39,7 +39,7 @@ type Step =
     | 'select_claim_status'
     | 'done'
 
-type ProductType = 'Annual Cover' | 'Family Cover' | 'MedCover'
+type ProductType = 'Annual Cover' | 'Family Cover' | 'MedCover' | 'Pay_and_Drive'
 type TierType = 'Gold' | 'Silver' | 'Bronze'
 
 type BotContext = {
@@ -291,7 +291,7 @@ const getBotResponse = (
             if (input === '1' || input.includes('correct')) {
                 return {
                     step: 'buy_product',
-                    messages: ['Select the product:\n1) Annual Cover\n2) Family Cover\n3) MedCover'],
+                    messages: ['Select the product:\n1) Annual Cover\n2) Family Cover\n3) MedCover\n4) Pay_and_Drive'],
                 }
             }
 
@@ -333,6 +333,14 @@ const getBotResponse = (
                     step: 'done',
                     contextPatch: { product: 'MedCover', tier: '' },
                     messages: ['MedCover selected. An agent will attend to you shortly.', mainMenuPrompt],
+                }
+            }
+
+            if (input === '4' || input.includes('pay_and_drive') || input.includes('pay and drive')) {
+                return {
+                    step: 'done',
+                    contextPatch: { product: 'Pay_and_Drive', tier: '' },
+                    messages: ['Pay_and_Drive selected. An agent will attend to you shortly.', mainMenuPrompt],
                 }
             }
 
