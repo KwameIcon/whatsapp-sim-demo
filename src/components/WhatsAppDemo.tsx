@@ -1,3 +1,9 @@
+// Dummy claims data for status checking
+const dummyClaims = [
+    { id: 'CLM12345', type: 'Life', date: '10/05/2026', status: 'Approved' },
+    { id: 'CLM67890', type: 'Hospital', date: '02/04/2026', status: 'Pending' },
+    { id: 'CLM54321', type: 'Life', date: '15/03/2026', status: 'Rejected' },
+]
 import { useEffect, useRef, useState } from 'react'
 import {
     ArrowLeft,
@@ -29,6 +35,8 @@ type Step =
     | 'claim_hospital_incident_date'
     | 'claim_hospital_discharge_date'
     | 'claim_hospital_upload'
+    | 'claims_menu'
+    | 'select_claim_status'
     | 'done'
 
 type ProductType = 'Annual Cover' | 'Family Cover' | 'MedCover'
@@ -156,12 +164,13 @@ const getBotResponse = (
             resetContext: true,
             messages: [
                 'Hello! Welcome to CoverHub.',
-                'How can I help you today? Reply with:\n1) Buy new policy\n2) Request callback\n3) File claim',
+                'How can I help you today? Reply with:\n1) Buy new policy\n2) Request callback\n3) Claims\n4) Support',
             ],
         }
     }
 
     switch (currentStep) {
+
         case 'welcome':
             if (input === '1' || input.includes('buy')) {
                 return {
@@ -182,10 +191,20 @@ const getBotResponse = (
 
             if (input === '3' || input.includes('claim')) {
                 return {
-                    step: 'claim_policy_type',
+                    step: 'claims_menu',
                     messages: [
-                        'File Claim',
-                        'Select policy type by replying with:\n1) Annual gold\n2) Annual silver',
+                        'Claims',
+                        'Select an option:\n1) File claim\n2) Check claim status',
+                    ],
+                }
+            }
+
+            if (input === '4' || input.includes('support')) {
+                return {
+                    step: 'done',
+                    messages: [
+                        'Support request received. An agent will attend to you shortly.',
+                        mainMenuPrompt,
                     ],
                 }
             }
@@ -193,9 +212,59 @@ const getBotResponse = (
             return {
                 step: 'welcome',
                 messages: [
-                    'Please reply with:\n1) Buy new policy\n2) Request callback\n3) File claim',
+                    'Please reply with:\n1) Buy new policy\n2) Request callback\n3) Claims\n4) Support',
                 ],
             }
+        case 'claims_menu':
+            if (input === '1' || input.includes('file')) {
+                return {
+                    step: 'claim_policy_type',
+                    messages: [
+                        'File Claim',
+                        'Select policy type by replying with:\n1) Annual gold\n2) Annual silver',
+                    ],
+                }
+            }
+            if (input === '2' || input.includes('status')) {
+                // Present dummy claims for selection
+                const claimList = dummyClaims.map((c, idx) => `${idx + 1}) ${c.id} - ${c.type} - ${c.date}`).join('\n')
+                return {
+                    step: 'select_claim_status',
+                    messages: [
+                        'Select a claim to view status:',
+                        claimList,
+                    ],
+                }
+            }
+            return {
+                step: 'claims_menu',
+                messages: [
+                    'Select an option:\n1) File claim\n2) Check claim status',
+                ],
+            }
+
+        case 'select_claim_status': {
+            const idx = parseInt(userInput.trim()) - 1
+            if (!isNaN(idx) && idx >= 0 && idx < dummyClaims.length) {
+                const claim = dummyClaims[idx]
+                return {
+                    step: 'done',
+                    messages: [
+                        `Claim ID: ${claim.id}\nType: ${claim.type}\nDate: ${claim.date}\nStatus: ${claim.status}`,
+                        mainMenuPrompt,
+                    ],
+                }
+            }
+            // Invalid selection
+            const claimList = dummyClaims.map((c, idx) => `${idx + 1}) ${c.id} - ${c.type} - ${c.date}`).join('\n')
+            return {
+                step: 'select_claim_status',
+                messages: [
+                    'Invalid selection. Please select a claim to view status:',
+                    claimList,
+                ],
+            }
+        }
 
         case 'buy_msisdn': {
             const msisdn = userInput.replace(/\s+/g, '').trim()
@@ -542,7 +611,7 @@ export default function WhatsAppDemo() {
         },
         {
             id: 2,
-            text: 'How can I help you today? Reply with:\n1) Buy new policy\n2) Request callback\n3) File claim',
+            text: 'How can I help you today? Reply with:\n1) Buy new policy\n2) Request callback\n3) Claims\n4) Support',
             isBot: true,
             time: '10:00 AM',
         },
