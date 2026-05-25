@@ -453,7 +453,7 @@ const getBotResponse = (
             return {
                 step: 'claim_life_upload',
                 contextPatch: { incidentDate: userInput.trim() },
-                messages: ['Upload file by typing the file name or reference.'],
+                messages: ['Click the file upload button and choose a file.'],
             }
         case 'claim_life_upload':
             if (!hasUploadedFile) {
@@ -491,7 +491,7 @@ const getBotResponse = (
             return {
                 step: 'claim_hospital_upload',
                 contextPatch: { dischargeDate: userInput.trim() },
-                messages: ['Upload file by typing the file name or reference.'],
+                messages: ['Click the file upload button and choose a file.'],
             }
         case 'claim_hospital_upload':
             if (!hasUploadedFile) {
