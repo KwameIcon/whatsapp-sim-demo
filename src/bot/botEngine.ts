@@ -132,7 +132,9 @@ export const getBotResponse = (
                 return {
                     step: 'done',
                     messages: [
-                        'Support request received. An agent will attend to you shortly.',
+                        'For support, please contact us at:',
+                        'Email: support@ayo4u.com',
+                        'WhatsApp Number: 020000000',
                         mainMenuPrompt,
                     ],
                 }
